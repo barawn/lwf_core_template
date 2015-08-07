@@ -29,6 +29,7 @@ public:
 		WDTCTL = WDTPW | CONFIG::CTL | WDTTMSEL | WDTCNTCL;
 		// This is sometimes called SFRIFG1, and sometimes IFG1, and they didn't do a compatibility define.
 		*CONFIG::IFG &= ~WDTIFG;
+		*CONFIG::IE |= WDTIE;
 	}
 	lwevent *const tick_lwevent = CONFIG::tick_lwevent;
 
