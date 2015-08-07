@@ -28,7 +28,7 @@
 #else
 #define USCI_BASE ((uint16_t) &UCA0CTL0)
 #endif
-#define USCI_OFFSET(x) ((uint16_t) (&x - USCI_BASE))
+#define USCI_OFFSET(x) ((uint16_t) (((uint16_t) &x) - USCI_BASE))
 #define USCI_REG8( x ) (*((volatile uint8_t *) (USCI_OFFSET(x) + (uint16_t) CONFIG::BASE)))
 #define USCI_REG16( x ) (*((volatile uint16_t *) (USCI_OFFSET(x) + (uint16_t) CONFIG::BASE)))
 #endif
@@ -39,10 +39,10 @@ public:
 	USCI_UART() {}
 	static void init_impl() {
 		USCI_REG8(UCA0CTL1) = CONFIG::CTL1 | UCSWRST;
-		USCI_REG8(UCA0CTL0) = CONFIG::CTL0;
-		USCI_REG8(UCA0BR0) = CONFIG::BR0;
-		USCI_REG8(UCA0BR1) = CONFIG::BR1;
-		USCI_REG8(UCA0MCTL) = CONFIG::MCTL;
+		if (CONFIG::CTL0) USCI_REG8(UCA0CTL0) = CONFIG::CTL0;
+		if (CONFIG::BR0) USCI_REG8(UCA0BR0) = CONFIG::BR0;
+		if (CONFIG::BR1) USCI_REG8(UCA0BR1) = CONFIG::BR1;
+		if (CONFIG::MCTL) USCI_REG8(UCA0MCTL) = CONFIG::MCTL;
 		USCI_REG8(UCA0CTL1) &= ~UCSWRST;
 	}
 	static void control_impl(bool enable) {
