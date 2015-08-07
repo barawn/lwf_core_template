@@ -44,15 +44,16 @@ typedef enum i2c_dirtype_t {
 
 //% \brief Base class for an I2C transaction.
 //%
-class i2c_transaction {
+//% Like most things in the lwevent framework, the I2C transaction is just a
+//% promoted lwevent: in this case with a data pointer and status call.
+class i2c_transaction : public lwevent {
 public:
 	i2c_transaction(uint8_t *initData, lwevent_handler_t initHandler) :
 		data(initData),
-		completion(initHandler, (lwevent *) lwevent::LWEVENT_WAITING) { }
+		lwevent(initHandler, (lwevent *) lwevent::LWEVENT_WAITING) { }
 	i2c_transaction() {}
 	uint8_t status;
 	uint8_t *data;
-	lwevent completion;
 };
 
 template<class T, class CONFIG>
@@ -81,7 +82,7 @@ public:
 		i2c_transaction *tmp;
 		if (T::transaction == 0x0) return;
 		tmp = T::transaction;
-		tmp->completion.handler(&tmp->completion);
+		tmp->handler(tmp);
 	}
 	static bool available() {
 		return (T::transaction == 0x0);
