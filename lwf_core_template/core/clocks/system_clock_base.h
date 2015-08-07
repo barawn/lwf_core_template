@@ -100,6 +100,7 @@ public:
 		uint16_t tmp;
 		lwevent_store_fifo *store;
 		system_timer *p;
+		lwevent *p2;
 		ev->clear();
 
 		// Fetch count. Count is incremented in the implementation, not here.
@@ -122,6 +123,7 @@ public:
 			p = (system_timer *) store->get_first();
 			// Timer expired?
 			if (p->count <= tmp) {
+				p2 = p->next;
 				// Yes. Pluck it off.
 				store->pop();
 				// And post it (without check).
@@ -133,7 +135,7 @@ public:
 				// overwritten.
 				queue1.post_without_check(p);
 			} else break;
-		} while (p->next != (lwevent *) lwevent::LWEVENT_TAIL);
+		} while (p2 != (lwevent *) lwevent::LWEVENT_TAIL);
 	}
 
 	volatile uint16_t *const count = CONFIG::count;
