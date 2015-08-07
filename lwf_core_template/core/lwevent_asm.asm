@@ -48,8 +48,8 @@
 ;        C becomes not Z. 3 or 4 cycles depending on variant.
 
 isr_lwevent_post_nocheck		.macro	LWEVENT
-			mov.w	r4, &:LWEVENT:.next
-			mov.w	#:LWEVENT:, r4
+			mov.w	r4, &:LWEVENT:.next					; 4 cycles 2 words
+			mov.w	#:LWEVENT:, r4						; 2 cycles 2 words
 			.endm
 
 isr_lwevent_post				.macro	LWEVENT

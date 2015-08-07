@@ -131,14 +131,17 @@ public:
 		tail = (lwevent *) lwevent::LWEVENT_TAIL;
 	}
 	void store_impl(lwevent *p) {
-		if (tail == (lwevent *) lwevent::LWEVENT_TAIL) {
-			p->next = head;
+		// Catch the empty case.
+		p->next = (lwevent *) lwevent::LWEVENT_TAIL;
+		if (empty()) {
+			// Set head to p.
 			head = p;
-			tail = p;
 		} else {
+			// Connect tail to p.
 			tail->next = p;
-			tail = p;
 		}
+		// p is the new tail.
+		tail = p;
 	}
 	/** \brief Insert an event at the beginning of the store.
 	 */
