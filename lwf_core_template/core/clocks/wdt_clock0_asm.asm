@@ -1,5 +1,5 @@
 	.define 0, WDT_CLOCK0_H_
-	.cdecls CPP, LIST, "../../components.h"
+	.cdecls CPP, LIST, "components.h"
 
 GlobalIf: .if WDT_CLOCK0_H_ = 1
 	.include "../lwevent_asm.asm"

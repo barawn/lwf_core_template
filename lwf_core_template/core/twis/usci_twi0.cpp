@@ -7,7 +7,7 @@
 #define COMPONENTS_DEFAULT
 // Add components.h. If we're added, we'll know.
 // Otherwise, we don't add anything, and the cpp files do nothing.
-#include "../../components.h"
+#include "components.h"
 // Change these lines for a new TWI. Everything else autorenames.
 #ifdef USCI_TWI0_H_
 #define I2C_OBJECT( x ) USCI_Twi0_##x

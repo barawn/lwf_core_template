@@ -1,5 +1,5 @@
 	.define 0, USCI_TWI0_H_
-	.cdecls CPP, LIST, "../../components.h"
+	.cdecls CPP, LIST, "components.h"
 
 GlobalIf:	.if	USCI_TWI0_H_ = 1
 	.include "../usci_magic.asm"

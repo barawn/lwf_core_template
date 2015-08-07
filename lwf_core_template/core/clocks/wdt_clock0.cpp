@@ -6,7 +6,7 @@
  */
 
 #define COMPONENTS_DEFAULT
-#include "../../components.h"
+#include "components.h"
 
 // Change these lines for a new WDT clock (how? WHO KNOWS). Everything else autorenames.
 #ifdef WDT_CLOCK0_H_

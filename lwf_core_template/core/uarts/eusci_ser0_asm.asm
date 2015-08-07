@@ -1,5 +1,5 @@
 	.define	0, EUSCI_SER0_H_
-	.cdecls CPP, LIST, "../../components.h"
+	.cdecls CPP, LIST, "components.h"
 GlobalIf:	.if	EUSCI_SER0_H_ = 1
 	.include "../lwevent_asm.asm"
 

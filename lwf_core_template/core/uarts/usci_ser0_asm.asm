@@ -1,6 +1,6 @@
 	; First define USCI_SER0_H_ as 0. Then include components.h, and we'll see if we're supposed to be here.
 	.define 0, USCI_SER0_H_
-	.cdecls CPP, LIST, "../../components.h"
+	.cdecls CPP, LIST, "components.h"
 
 	; This prevents this entire file from doing anything if the USCI_Ser0 isn't included.
 GlobalIf:	.if	USCI_SER0_H_ = 1

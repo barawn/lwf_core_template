@@ -12,7 +12,7 @@
 // This causes all the overrideable handlers to have a 'weak' attribute.
 #define COMPONENTS_DEFAULT
 
-#include "../../components.h"
+#include "components.h"
 
 #ifdef EUSCI_SER0_H_
 // Change these lines for a new UART. Everything else autorenames.
