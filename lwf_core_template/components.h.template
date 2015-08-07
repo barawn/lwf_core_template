@@ -8,8 +8,8 @@
  *      Author: barawn
  */
 
-#ifndef COMPONENTS_H_
-#define COMPONENTS_H_
+#ifndef COMPONENTS_H_TEMPLATE_
+#define COMPONENTS_H_TEMPLATE_
 
 
 // lwevent queues.
@@ -35,4 +35,4 @@ extern Clock0 clock0;
 void components_init();
 void components_loop();
 
-#endif /* COMPONENTS_H_ */
+#endif /* COMPONENTS_H_TEMPLATE_ */

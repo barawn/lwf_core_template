@@ -5,7 +5,7 @@
  *      Author: barawn
  */
 
-#include "components.h"
+#include "components.h.template"
 
 isr_lwevent_queue queue0;
 lwevent_queue queue1;
