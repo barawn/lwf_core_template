@@ -36,6 +36,7 @@ extern lwevent_queue queue1;
 class system_timer : public lwevent {
 public:
 	system_timer(lwevent_handler_t handler) : lwevent(handler, (lwevent *) lwevent::LWEVENT_WAITING) { }
+	system_timer() {}
 	uint16_t count;
 };
 
