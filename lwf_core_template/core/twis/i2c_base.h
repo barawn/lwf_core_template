@@ -72,7 +72,7 @@ public:
 		T::init_impl();
 	}
 	static void prepare(i2c_transaction *t) {
-		if (T::transaction != 0x0) return;
+		if (T::transaction != (i2c_transaction *) lwevent::LWEVENT_WAITING) return;
 		T::transaction = t;
 	}
 	static void submit(uint8_t address, uint8_t len, i2c_dirtype_t dirtype) {
@@ -80,22 +80,22 @@ public:
 	}
 	static void complete() {
 		i2c_transaction *tmp;
-		if (T::transaction == lwevent::LWEVENT_WAITING) return;
+		if (T::transaction == (i2c_transaction *) lwevent::LWEVENT_WAITING) return;
 		tmp = T::transaction;
 		tmp->handler(tmp);
 	}
 	static bool available() {
-		return (T::transaction == lwevent::LWEVENT_WAITING);
+		return (T::transaction == (i2c_transaction *) lwevent::LWEVENT_WAITING);
 	}
 	static void release() {
 		lwevent *t;
-		T::transaction = lwevent::LWEVENT_WAITING;
+		T::transaction = (i2c_transaction *) lwevent::LWEVENT_WAITING;
 		if (T::wait_queue.empty()) return;
 		t = T::wait_queue.pop();
 		t->handler(t);
 	}
 	static void wait_for_available(lwevent *t) {
-		if (T::transaction == 0x0) {
+		if (T::transaction == (i2c_transaction *) lwevent::LWEVENT_WAITING) {
 			t->handler(t);
 		} else {
 			T::wait_queue.store(t);
