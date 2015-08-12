@@ -80,16 +80,16 @@ public:
 	}
 	static void complete() {
 		i2c_transaction *tmp;
-		if (T::transaction == 0x0) return;
+		if (T::transaction == lwevent::LWEVENT_WAITING) return;
 		tmp = T::transaction;
 		tmp->handler(tmp);
 	}
 	static bool available() {
-		return (T::transaction == 0x0);
+		return (T::transaction == lwevent::LWEVENT_WAITING);
 	}
 	static void release() {
 		lwevent *t;
-		T::transaction = 0x0;
+		T::transaction = lwevent::LWEVENT_WAITING;
 		if (T::wait_queue.empty()) return;
 		t = T::wait_queue.pop();
 		t->handler(t);
