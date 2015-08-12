@@ -63,6 +63,8 @@ public:
 	//% In fact if you do prepare(), submit(), it's smart enough to optimize a good
 	//% portion of what's required away.
 	static void submit_impl(uint8_t address, uint8_t len, i2c_dirtype_t dirtype) {
+		uint8_t to_set_ie = 0;
+
 		transaction->status |= I2C::I2C_STATUS_BUSY;
 		// set up the slave address
 		USCI_REG8(UCB0I2CSA) = address;
@@ -103,7 +105,7 @@ public:
 				// this is ~90 us. At *slower* bitrates, it's obviously even worse!
 				return;
 			}
-			*CONFIG::IE |= CONFIG::RXIE;
+			to_set_ie = CONFIG::RXIE;
 		}
 		else {
 			USCI_REG8(UCB0CTL1) |= UCTR;
@@ -112,11 +114,12 @@ public:
 			// and wakes up. Software then polls for UCTXSTP to complete since there
 			// is no interrupt we can get.
 			*CONFIG::isr_count = len;
-			*CONFIG::IE |= CONFIG::TXIE;
+			to_set_ie = CONFIG::TXIE;
 		}
 		USCI_REG8(UCB0I2CIE) |= (UCNACKIE | UCALIE);
 		// initiate it. ISR takes over after this.
 		USCI_REG8(UCB0CTL1) |= UCTXSTT;
+		*CONFIG::IE = to_set_ie;
 	}
 	static void i2c_lwevent_handler(lwevent *ev) {
 		uint8_t tmp;
