@@ -10,6 +10,7 @@
 
 #include <stdint.h>
 #include <msp430.h>
+#include "core/clocks/system_clock_base.h"
 
 #define CLOCK_OBJECT(x) WDT_Clock0_##x
 #define WDT_Clock0_VECTOR_LOCATION		WDT_VECTOR

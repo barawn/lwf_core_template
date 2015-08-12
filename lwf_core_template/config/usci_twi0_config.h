@@ -10,12 +10,12 @@
 
 #include <stdint.h>
 #include <msp430.h>
-#include "../i2c_base.h"
+#include "core/twis/i2c_base.h"
 
 #define I2C_OBJECT(x) USCI_Twi0_##x
-#define USCI_Twi0_RXTX_VECTOR_LOCATION	0
+#define USCI_Twi0_RXTX_VECTOR_LOCATION	USCIAB0TX_VECTOR
 #define USCI_B0_TX_ISR					USCI_Twi0_RXTX_ISR
-#define USCI_Twi0_FLAG_VECTOR_LOCATION	0
+#define USCI_Twi0_FLAG_VECTOR_LOCATION	USCIAB0RX_VECTOR
 #define USCI_B0_RX_ISR					USCI_Twi0_FLAG_ISR
 
 //% \brief Actual I2C state lwevent.
