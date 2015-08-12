@@ -12,3 +12,7 @@ Note: for any lwframework project you need to go to project properties, "MSP430 
 4. Create a components.cpp, components.h, and main.cpp file. You can open the ".template" files from the lwf_core_template project and copy those over.
 5. Add the lwf_core_template project and the current project to the include locations. (in Properties, go to MSP430 Compiler->Include Options, then Add, Workspace, and select the lwf_core_template project. Then do the same with your own project).
 6. While there, go to MSP430 Compiler->Advanced Options->Runtime Model Options and select "Reserve a register for the user. (--global register) [r4]".
+
+## See the Wiki!
+
+The wiki on GitHub ( https://github.com/barawn/lwf_core_template/wiki ) has more information on lwframework.
