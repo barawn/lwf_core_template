@@ -34,10 +34,11 @@
 template <class HW, class CONFIG>
 class adc_base {
 public:
+	typedef typename CONFIG::adc_result_type result_type;
 	void init() {
 		HW::init_impl();
 	}
-	CONFIG::adc_result_type get_value() {
+	result_type get_value() {
 		return HW::get_value_impl();
 	}
 	static bool available() {
