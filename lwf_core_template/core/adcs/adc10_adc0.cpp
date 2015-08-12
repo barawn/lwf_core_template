@@ -20,6 +20,6 @@ static void dummy_handler(lwevent *ev) {
 }
 
 lwevent_store_fifo This_ADC::wait_queue;
-lwevent ADC_OBJECT(waiting_lwevent)((lwevent_handler_t) dummy_handler, lwevent::LWEVENT_DISABLED);;
+lwevent ADC_OBJECT(waiting_lwevent)((lwevent_handler_t) dummy_handler, lwevent::LWEVENT_DISABLED);
 
 #endif
