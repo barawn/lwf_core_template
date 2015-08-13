@@ -43,9 +43,16 @@
 ; isr_lwevent_check_clrC LWEVENT
 ; 		 Sets Z if a lwevent has not previously been posted and is enabled.
 ;        Always clears C. 4 cycles.
-; isr_lwevent_checkk_CnotZ LWEVENT
+; isr_lwevent_check_CnotZ LWEVENT
 ;        Sets Z if a lwevent has not previously been posted and is enabled.
 ;        C becomes not Z. 3 or 4 cycles depending on variant.
+;
+; Register-only macro:
+;
+; If the lwevent location is dynamic, things are a bit different.
+; We only provide two basic macros for that:
+; isr_lwevent_register_check : checks (using tst, so sets Z)
+; isr_lwevent_register_post_nocheck : posts
 
 isr_lwevent_post_nocheck		.macro	LWEVENT
 			mov.w	r4, &:LWEVENT:.next					; 4 cycles 2 words
@@ -78,3 +85,13 @@ isr_lwevent_check_clrC			.macro	LWEVENT
 isr_lwevent_check_CnotZ			.macro	LWEVENT
 			bit.w	#(0xFFFF), &:LWEVENT:.next
 			.endm
+
+isr_lwevent_register_check				.macro	REGISTER_POINTER
+			tst.w	2(:REGISTER_POINTER:)
+			.endm
+
+isr_lwevent_register_post_nocheck		.macro	REGISTER_POINTER
+			mov.w	r4, 2(:REGISTER_POINTER:)				; 4 cycles 2 words
+			mov.w	@:REGISTER_POINTER:, r4						; 2 cycles 1 words
+			.endm
+
