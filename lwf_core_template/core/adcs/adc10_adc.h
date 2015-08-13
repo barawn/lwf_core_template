@@ -22,6 +22,7 @@
 template<class CONFIG>
 class ADC10_ADC : public adc_base<ADC10_ADC<CONFIG>, CONFIG> {
 public:
+	typedef adc_base<ADC10_ADC<CONFIG>, CONFIG> adc_base_type;
 	typedef typename CONFIG::adc_result_type result_type;
 	static void init_impl() {
 		ADC10CTL0 = CONFIG::CTL0;
@@ -45,7 +46,6 @@ public:
 	result_type get_value() {
 		return ADC10MEM;
 	}
-	static lwevent_store_fifo wait_queue;
 };
 
 #endif /* ADC10_ADC_H_ */

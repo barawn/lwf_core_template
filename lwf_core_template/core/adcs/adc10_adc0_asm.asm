@@ -7,7 +7,7 @@ GlobalIf:	.if	ADC10_ADC0_H_ = 1
 	.asmfunc
 ADC10_ISR:
 	bic.b	#ADC10IE, ADC10CTL0;
-	isr_lwevent_post_nocheck ADC10_Adc0_waiting_lwevent
+	isr_lwevent_post_nocheck ADC10_Adc0_helper_lwevent
 	bic		#(LPM3), 0(SP)
 	reti
 	.endasmfunc

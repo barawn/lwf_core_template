@@ -9,28 +9,13 @@
 #define ADC_BASE_H_
 
 #include "../lwevent.h"
-//% Base class for ADCs.
+//% Base class for a sharable ADC.
 //%
-//% Base class for ADC implementations. ADCs are a lot like I2C
-//% implementations, in that they can be shared (or not shared).
-//% First you check if it's available, then call prepare to claim
-//% it and set up the conversion, and then call convert to actually
-//% perform the conversion.
-//%
-//% If the ADC is not available, you call wait_for_available()
-//% and the lwevent will then post when the ADC becomes available.
-//%
-//% convert() with no argument avoids any channel-switching for
-//% repeated conversions.
-//%
-//% ADCs differ from I2C implementations in that the interrupt
-//% handler posts the waiting lwevent directly, since there isn't any
-//% 'cleanup' needed (typically - this could of course be handled
-//% in the HW phase by having the ISR post a different lwevent with
-//% a local handler).
-//%
-//% Therefore 'prepare' consists of passing the *callback*, so
-//% that the *internal* lwevent can be posted.
+//% This class contains the framework for a sharable ADC implementation,
+//% like the I2C implementation. You call available() to find out if the ADC
+//% is in use, you call prepare() once it is, and then you call convert()
+//% to actually perform the conversion. Once the conversion is done, the lwevent
+//% passed to prepare has its handler called.
 template <class HW, class CONFIG>
 class adc_base {
 public:
@@ -42,10 +27,10 @@ public:
 		return HW::get_value_impl();
 	}
 	static bool available() {
-		return (waiting_lwevent->next = lwevent::LWEVENT_DISABLED);
+		return (*waiting_lwevent_p == lwevent::LWEVENT_WAITING);
 	}
-	static void prepare(lwevent_handler_t callback) {
-		waiting_lwevent->handler = callback;
+	static void prepare(lwevent *ev) {
+		*waiting_lwevent_p = ev;
 	}
 	static void convert(uint8_t ch) {
 		HW::convert_impl(ch);
@@ -55,20 +40,24 @@ public:
 	}
 	static void release() {
 		lwevent *t;
-		waiting_lwevent->next = lwevent::LWEVENT_DISABLED;
+		*waiting_lwevent_p = lwevent::LWEVENT_WAITING;
 		if (HW::wait_queue.empty()) return;
 		t = HW::wait_queue.pop();
 		t->handler(t);
 	}
 	static void wait_for_available(lwevent *t) {
-		if (waiting_lwevent->next == lwevent::LWEVENT_DISABLED) {
+		if (*waiting_lwevent_p == lwevent::LWEVENT_WAITING) {
 			t->handler(t);
 		} else {
 			HW::wait_queue.store(t);
 		}
 	}
-
-	lwevent *const waiting_lwevent = CONFIG::waiting_lwevent;
+	static void helper_handler(lwevent *ev) {
+		ev->clear();
+		(*waiting_lwevent_p)->handler(*waiting_lwevent_p);
+	}
+	static lwevent_store_fifo wait_queue;
+	lwevent **const waiting_lwevent_p = CONFIG::waiting_lwevent_p;
 };
 
 

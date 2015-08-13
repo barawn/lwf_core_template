@@ -15,11 +15,8 @@
 #define ADC_OBJECT( x ) ADC10_Adc0_##x
 typedef ADC10_Adc0 This_ADC;
 
-static void dummy_handler(lwevent *ev) {
-	ev->clear();
-}
-
-lwevent_store_fifo This_ADC::wait_queue;
-lwevent ADC_OBJECT(waiting_lwevent)((lwevent_handler_t) dummy_handler, (lwevent *) lwevent::LWEVENT_DISABLED);
+lwevent_store_fifo This_ADC::adc_base_type::wait_queue;
+lwevent *ADC_OBJECT(waiting_lwevent_p) = (lwevent *) lwevent::LWEVENT_WAITING;
+lwevent ADC_OBJECT(helper_lwevent)((lwevent_handler_t) This_ADC::adc_base_type::helper_handler, (lwevent *) lwevent::LWEVENT_WAITING);
 
 #endif
