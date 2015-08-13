@@ -42,6 +42,8 @@ extern lwevent_queue queue1;
 template<class CONFIG>
 class USCI_I2C : public i2c_base<USCI_I2C<CONFIG>, CONFIG> {
 public:
+	typedef typename CONFIG::i2c_transaction_type transaction_type;
+
 	typedef i2c_base<USCI_I2C<CONFIG>,CONFIG> I2C;
 	USCI_I2C() {}
 	static void init_impl() {
@@ -211,7 +213,7 @@ public:
 		}
 	}
 
-	static i2c_transaction *transaction;
+	static transaction_type *transaction;
 	static bool lock;
 	static lwevent_store_fifo wait_queue;
 };

@@ -29,6 +29,7 @@ extern	uint8_t *I2C_OBJECT(isr_data_ptr);
 //%
 //% Use SMCLK.
 //% Divide by 10 for bitclock.
+//% Use i2c_transactions as the transaction class.
 class I2C_OBJECT(Config) {
 public:
 	const uint8_t CTL0 = UCMST | (UCMODE_3) | UCSYNC;
@@ -43,6 +44,8 @@ public:
 	volatile uint8_t *const IFG = &IFG2;
 	const uint8_t TXIFG = UCB0TXIFG;
 	const uint8_t RXIFG = UCB0RXIFG;
+
+	typedef i2c_transaction i2c_transaction_type;
 
 	lwevent *const state_lwevent = &I2C_OBJECT(state_lwevent);
 	uint8_t *const isr_count = &I2C_OBJECT(isr_count);

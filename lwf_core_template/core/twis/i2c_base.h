@@ -42,10 +42,16 @@ typedef enum i2c_dirtype_t {
 	I2C_DIRECTION_READ = 0x01,			//< Set if it's a read, otherwise it's a write.
 } i2c_dirtype_t;
 
-//% \brief Base class for an I2C transaction.
+//% \brief Base class for a *simple* I2C transaction.
 //%
 //% Like most things in the lwevent framework, the I2C transaction is just a
 //% promoted lwevent: in this case with a data pointer and status call.
+//%
+//% Most TWI interfaces will use this as their I2C transaction type, but
+//% the config file can redefine another type (which obviously needs to have
+//% lwevent as its most derived class) which must contain status, and data
+//% as members. (This could be used to make an i2c_timer_transaction
+//% which derives from system_timer instead).
 class i2c_transaction : public lwevent {
 public:
 	i2c_transaction(uint8_t *initData, lwevent_handler_t initHandler) :
@@ -59,6 +65,7 @@ public:
 template<class T, class CONFIG>
 class i2c_base {
 public:
+	typedef typename CONFIG::i2c_transaction_type transaction_type;
 	const uint8_t I2C_STATUS_OK = 0;
 	const uint8_t I2C_STATUS_BUSY = 1;
 	const uint8_t I2C_STATUS_POLLING_START = 2;
@@ -68,34 +75,34 @@ public:
 
 	i2c_base() {}
 	static void init() {
-		T::transaction = 0x0;
+		T::transaction = (transaction_type *) lwevent::LWEVENT_WAITING;
 		T::init_impl();
 	}
 	static void prepare(i2c_transaction *t) {
-		if (T::transaction != (i2c_transaction *) lwevent::LWEVENT_WAITING) return;
+		if (T::transaction != (transaction_type *) lwevent::LWEVENT_WAITING) return;
 		T::transaction = t;
 	}
 	static void submit(uint8_t address, uint8_t len, i2c_dirtype_t dirtype) {
 		T::submit_impl(address, len, dirtype);
 	}
 	static void complete() {
-		i2c_transaction *tmp;
-		if (T::transaction == (i2c_transaction *) lwevent::LWEVENT_WAITING) return;
+		transaction_type *tmp;
+		if (T::transaction == (transaction_type *) lwevent::LWEVENT_WAITING) return;
 		tmp = T::transaction;
 		tmp->handler(tmp);
 	}
 	static bool available() {
-		return (T::transaction == (i2c_transaction *) lwevent::LWEVENT_WAITING);
+		return (T::transaction == (transaction_type *) lwevent::LWEVENT_WAITING);
 	}
 	static void release() {
 		lwevent *t;
-		T::transaction = (i2c_transaction *) lwevent::LWEVENT_WAITING;
+		T::transaction = (transaction_type *) lwevent::LWEVENT_WAITING;
 		if (T::wait_queue.empty()) return;
 		t = T::wait_queue.pop();
 		t->handler(t);
 	}
 	static void wait_for_available(lwevent *t) {
-		if (T::transaction == (i2c_transaction *) lwevent::LWEVENT_WAITING) {
+		if (T::transaction == (transaction_type *) lwevent::LWEVENT_WAITING) {
 			t->handler(t);
 		} else {
 			T::wait_queue.store(t);
