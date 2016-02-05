@@ -18,6 +18,15 @@
 #error WDT not found in selected device
 #endif
 
+// TI didn't do a compatibility define, so I will.
+#ifdef __MSP430_HAS_WDT__
+#define WDT_IE IE1
+#define WDT_IFG IFG1
+#else
+#define WDT_IE SFRIE1
+#define WDT_IFG SFRIFG1
+#endif
+
 extern isr_lwevent_queue queue0;
 
 template<typename CONFIG>
@@ -27,9 +36,10 @@ public:
 	static void init_impl() {
 		// This is always called WDTCTL.
 		WDTCTL = WDTPW | CONFIG::CTL | WDTTMSEL | WDTCNTCL;
+
 		// This is sometimes called SFRIFG1, and sometimes IFG1, and they didn't do a compatibility define.
-		*CONFIG::IFG &= ~WDTIFG;
-		*CONFIG::IE |= WDTIE;
+		WDT_IFG &= ~WDTIFG;
+		WDT_IE |= WDTIE;
 	}
 	lwevent *const tick_lwevent = CONFIG::tick_lwevent;
 
