@@ -8,8 +8,8 @@
 #ifndef EUSCI_SER0_H_
 #define EUSCI_SER0_H_
 
-#include "eusci_uart.h"
 #include "config/eusci_ser0_config.h"
+#include "eusci_uart.h"
 
 typedef EUSCI_UART<EUSCI_Ser0_Config> EUSCI_Ser0;
 

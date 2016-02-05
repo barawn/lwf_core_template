@@ -5,7 +5,7 @@ GlobalIf:	.if	EUSCI_SER0_H_ = 1
 
 EUSCI_SER0_ISR:
 	; Jump table.
-	add.w	&(UCA0IV+EUSCI_Ser0_Config_enum.BASE-__MSP430_BASEADDRESS_EUSCI_A0__), PC
+	add.w	&(UCA0IV+EUSCI_Ser0_Config_enum.EUSCI_Ser0_BASE-__MSP430_BASEADDRESS_EUSCI_A0__), PC
 	; 0: No interrupt.
 	reti
 	; 2: RXIFG.
@@ -19,9 +19,9 @@ EUSCI_SER0_ISR:
 EUSCI_SER0_RX_ISR:
 	push	r15
 	mov.b	&EUSCI_Ser0_pointers.rx_wr, r15
-	mov.b	&(UCA0RXBUF+EUSCI_Ser0_Config_enum.BASE-__MSP430_BASEADDRESS_EUSCI_A0__), EUSCI_Ser0_rx_buffer(r15)
+	mov.b	&(UCA0RXBUF+EUSCI_Ser0_Config_enum.EUSCI_Ser0_BASE-__MSP430_BASEADDRESS_EUSCI_A0__), EUSCI_Ser0_rx_buffer(r15)
 	inc.b	r15
-	bic.b	#EUSCI_Ser0_Config_enum.RX_BUF_SIZE, r15
+	bic.b	#EUSCI_Ser0_Config_enum.EUSCI_Ser0_RX_BUF_SIZE, r15
 	mov.b	r15, &EUSCI_Ser0_pointers.rx_wr
 	pop		r15
 	isr_lwevent_post	EUSCI_Ser0_rx_data_event
@@ -35,14 +35,15 @@ EUSCI_SER0_TX_ISR:
 	; Not equal, so there is one. Copy it to TXBUF, increment pointer, and continue.
 	push	r15
 	mov.b	&EUSCI_Ser0_pointers.tx_rd, r15
-	mov.b	EUSCI_Ser0_tx_buffer(r15), &(UCA0TXBUF+EUSCI_Ser0_Config_enum.BASE-__MSP430_BASEADDRESS_EUSCI_A0__)
+	mov.b	EUSCI_Ser0_tx_buffer(r15), &(UCA0TXBUF+EUSCI_Ser0_Config_enum.EUSCI_Ser0_BASE-__MSP430_BASEADDRESS_EUSCI_A0__)
 	inc.b	r15
-	bic.b	#EUSCI_Ser0_Config_enum.RX_BUF_SIZE, r15
+	bic.b	#EUSCI_Ser0_Config_enum.EUSCI_Ser0_TX_BUF_SIZE, r15
 	mov.b	r15, &EUSCI_Ser0_pointers.tx_rd
 	pop		r15
 	reti
 EUSCI_Ser0_TX_ISR_empty:
-	bic.b	#UCTXIE, &(UCA0IE+EUSCI_Ser0_Config_enum.BASE-__MSP430_BASEADDRESS_EUSCI_A0__)
+	bic.b	#UCTXIE, &(UCA0IE+EUSCI_Ser0_Config_enum.EUSCI_Ser0_BASE-__MSP430_BASEADDRESS_EUSCI_A0__)
+	bis.b	#UCTXIFG, &(UCA0IFG+EUSCI_Ser0_Config_enum.EUSCI_Ser0_BASE-__MSP430_BASEADDRESS_EUSCI_A0__)
 	isr_lwevent_post_wakeup	EUSCI_Ser0_tx_empty_event, 0
 	reti
 
